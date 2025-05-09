@@ -13,6 +13,7 @@ namespace LKEstateAgents2.Controllers
         private Repository<Category> categories;
         private readonly IWebHostEnvironment _webHostEnvironment;
 
+        // constructor - initialises the controller with dependencies
         public ProductController(ApplicationDbContext context, IWebHostEnvironment webHostEnvironment)
         {
             products = new Repository<Product>(context);
@@ -26,6 +27,7 @@ namespace LKEstateAgents2.Controllers
             return View(await products.GetAllAsync());
         }
 
+        // retrieves all ingredient and category entities to populate dropdowns in the form
         [HttpGet]
         public async Task<IActionResult> AddEdit(int id)
         {
@@ -33,11 +35,13 @@ namespace LKEstateAgents2.Controllers
             ViewBag.Categories = await categories.GetAllAsync();
             if (id == 0)
             {
+                // initialise a new product object for adding a product
                 ViewBag.Operation = "Add";
                 return View(new Product());
             }
             else
             {
+                // retrieve the product by id and include related data
                 Product product = await products.GetByIdAsync(id, new QueryOptions<Product>
                 {
                     Includes = "ProductIngredients.Ingredient, Category"
@@ -47,6 +51,8 @@ namespace LKEstateAgents2.Controllers
             }
         }
 
+        // manages relationships between product category and ingredient using navigatioin properties and the productingredient join table
+        // uses viewbag to pass data to the views
         [HttpPost]
         public async Task<IActionResult> AddEdit(Product product, int[] ingredientIds, int catId)
         {

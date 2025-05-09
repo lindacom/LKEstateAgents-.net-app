@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using LKEstateAgents2.Data;
 using LKEstateAgents2.Models;
 
-namespace LKEstateAgents2.Controllers
+namespace LKEstateAgents2.Controllers.Properties
 {
     public class PropertiesController : Controller
     {

@@ -14,6 +14,7 @@ namespace LKEstateAgents2.Controllers
         private Repository<Order> _orders;
         private readonly UserManager<ApplicationUser> _userManager;
 
+        // constructor - initialises the controller with dependencies
         public OrderController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
@@ -29,6 +30,7 @@ namespace LKEstateAgents2.Controllers
             //ViewBag.Products = await _products.GetAllAsync();
 
             //Retrieve or create an OrderViewModel from session or other state management
+            // if it doesn't exist, a new OrderViewModel is created with an empty list of OrderItems and available products
             var model = HttpContext.Session.Get<OrderViewModel>("OrderViewModel") ?? new OrderViewModel
             {
                 OrderItems = new List<OrderItemViewModel>(),
@@ -85,6 +87,7 @@ namespace LKEstateAgents2.Controllers
             return RedirectToAction("Create", model);
         }
 
+        // diplays the current cart (order items)
         [HttpGet]
         [Authorize]
         public async Task<IActionResult> Cart()
@@ -92,6 +95,8 @@ namespace LKEstateAgents2.Controllers
 
             // Retrieve the OrderViewModel from session or other state management
             var model = HttpContext.Session.Get<OrderViewModel>("OrderViewModel");
+
+            // If the model is null or has no items, redirect to Create
 
             if (model == null || model.OrderItems.Count == 0)
             {
@@ -106,6 +111,7 @@ namespace LKEstateAgents2.Controllers
         public async Task<IActionResult> PlaceOrder()
         {
             var model = HttpContext.Session.Get<OrderViewModel>("OrderViewModel");
+            // if the cart is empty, redirects to the Create action
             if (model == null || model.OrderItems.Count == 0)
             {
                 return RedirectToAction("Create");
@@ -140,12 +146,15 @@ namespace LKEstateAgents2.Controllers
             return RedirectToAction("ViewOrders");
         }
 
+        // displays all orders for the logged in user
         [HttpGet]
         [Authorize]
         public async Task<IActionResult> ViewOrders()
         {
+            // Retrieve the user ID from the UserManager
             var userId = _userManager.GetUserId(User);
 
+            //retrieve all orders including related order items and their associated product data
             var userOrders = await _orders.GetAllByIdAsync(userId, "UserId", new QueryOptions<Order>
             {
                 Includes = "OrderItems.Product"

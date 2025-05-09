@@ -9,7 +9,7 @@ using LKEstateAgents2.Data;
 using LKEstateAgents2.Models;
 using System.Collections.Immutable;
 
-namespace LKEstateAgents2.Controllers
+namespace LKEstateAgents2.Controllers.Properties
 {
     public class TradesController : Controller
     {
